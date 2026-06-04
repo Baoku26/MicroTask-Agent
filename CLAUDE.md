@@ -18,14 +18,14 @@ This file gives AI assistants (Claude, Copilot, Cursor, etc.) full context about
 
 ```
 microtask-agent/
-├── app/                        # Next.js 14 App Router
+├── app/                        # Next.js 14 App Router (Day 4+)
 │   ├── page.tsx                # Home — task picker grid
 │   ├── layout.tsx              # Root layout, providers
 │   ├── task/[type]/page.tsx    # Per-task input screen
 │   └── api/
 │       └── task/route.ts       # POST /api/task — the core backend endpoint
 │
-├── components/
+├── components/                 # (Day 4+)
 │   ├── WalletConnect.tsx       # MiniPay detection + RainbowKit fallback
 │   ├── TaskCard.tsx            # Task picker card with price badge
 │   ├── TaskInput.tsx           # Per-task input form
@@ -33,29 +33,31 @@ microtask-agent/
 │   ├── ResultCard.tsx          # AI result display + copy/share
 │   └── TxHistory.tsx           # Session transaction history (localStorage)
 │
-├── hooks/
+├── hooks/                      # (Day 6+)
 │   ├── useMiniPay.ts           # Detects window.ethereum.isMiniPay
 │   ├── useTaskPayment.ts       # Handles approve() + requestTask() flow
 │   └── useCUSDBalance.ts       # Reads user's cUSD balance
 │
-├── lib/
+├── lib/                        # (Day 9+)
 │   ├── contract.ts             # ABI, address constants, Viem client setup
 │   ├── verifyPayment.ts        # Backend TX verification logic (Celo RPC)
 │   ├── taskRouter.ts           # Routes taskType to correct AI provider + prompt
 │   └── constants.ts            # Task types, prices, chain config
 │
-├── contracts/
+├── contracts/                  # ✅ DONE (Day 1)
 │   ├── MicroTaskPayment.sol    # The payment contract
-│   ├── hardhat.config.js       # Hardhat config for Alfajores + Celo Mainnet
 │   └── scripts/
 │       └── deploy.ts           # Deployment script
 │
-├── styles/
+├── styles/                     # (Day 4+)
 │   └── globals.css             # Tailwind base + CSS variable tokens
 │
 ├── public/                     # Static assets
+├── hardhat.config.js           # ✅ Hardhat config — lives at ROOT (not in contracts/)
+├── package.json                # ✅ Root package — hardhat devDeps here; Next.js added Day 4
 ├── .env.local                  # Local env (never commit — see .env.example)
-├── .env.example                # Template for required env vars
+├── .env.example                # ✅ Template for all env vars
+├── .gitignore                  # ✅ Ignores .env, node_modules, artifacts, .next, *.md
 ├── CLAUDE.md                   # This file
 ├── planning.md                 # Product decisions, roadmap, architecture summary
 └── tasks.md                    # Sprint checklist — current status of every task
@@ -74,7 +76,7 @@ microtask-agent/
 | Wallet | Wagmi v2 + Viem | Primary chain interaction layer |
 | Wallet UI | RainbowKit | Browser wallet fallback only |
 | Contract lang | Solidity 0.8.19 | Simple, no proxy patterns |
-| Contract tooling | Hardhat + hardhat-celo | Deploy + verify on Celoscan |
+| Contract tooling | Hardhat v2 + `@nomicfoundation/hardhat-toolbox@hh2` | Deploy + verify on Celoscan via `customChains` config |
 | AI — text (V1) | Anthropic API | Model: `claude-haiku-4-5` |
 | AI — image (V2) | Replicate API | Model: SDXL or Flux Schnell |
 | AI — translation (V3) | LibreTranslate | Self-hosted |
@@ -144,6 +146,10 @@ ANTHROPIC_API_KEY=sk-ant-...
 REPLICATE_API_TOKEN=r8_...
 LIBRETRANSLATE_URL=https://your-instance.railway.app
 LIBRETRANSLATE_API_KEY=...
+
+# ── Contract deployment (never commit the real values) ──
+PRIVATE_KEY=0x...
+CELOSCAN_API_KEY=...
 ```
 
 **Rule:** AI API keys must never appear in client-side code. If you see `NEXT_PUBLIC_ANTHROPIC_API_KEY` anywhere, that is a bug — remove it immediately.
@@ -344,3 +350,31 @@ npm run type-check
 | Replicate Docs | https://replicate.com/docs |
 | talent.app | https://talent.app |
 | Proof of Ship | https://talent.app/earn/proof-of-ship |
+
+---
+
+## Build Status
+
+### Completed
+
+**Phase 1 — Day 1 (Jun 4–5, 2026)**
+- `contracts/MicroTaskPayment.sol` written and compiles clean (`solc 0.8.19`, EVM target: paris)
+- `contracts/scripts/deploy.ts` written — auto-selects cUSD address by network
+- `hardhat.config.js` at project root — Alfajores + Celo Mainnet networks, Celoscan `customChains`
+- `package.json` at root with `compile`, `deploy:testnet`, `deploy:mainnet` npm scripts
+- `.env.example` created with all required vars
+- `.gitignore` created
+
+### Pending
+
+- **Day 2:** Alfajores testnet deploy + manual testing (`requestTask`, `withdraw`, events)
+- **Day 3:** Celo Mainnet deploy + Celoscan verification
+- **Day 4:** Next.js 14 scaffold + design tokens (adds `app/`, `styles/`, updates `package.json`)
+- Days 5–20: see `tasks.md`
+
+### Key Implementation Notes
+
+- `@celo/hardhat-celo` does not exist on npm — use `hardhat-celo` (community) or plain `@nomicfoundation/hardhat-toolbox@hh2` with `customChains` (current approach)
+- `hardhat.config.js` is at the **project root**, not inside `contracts/` — this is intentional so `npx hardhat run contracts/scripts/deploy.ts` paths resolve correctly
+- `paths.sources = "./contracts"` in Hardhat config — do not change to `"./"` or it will scan `node_modules` for `.sol` files
+- Solidity string literals cannot contain Unicode characters (em dash, curly quotes, etc.) — use ASCII only in `require()` messages
