@@ -1,0 +1,27 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+#MDs
+.md
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Hardhat
+cache/
+artifacts/
+
+# Next.js
+.next/
+out/
+
+# Build
+dist/
+build/
+
+# OS
+.DS_Store
