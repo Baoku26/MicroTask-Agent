@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useAccount } from 'wagmi'
 import { X, ExternalLink, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { TASK_LABELS, TASK_PRICES } from '@/lib/constants'
@@ -32,12 +32,16 @@ export function PaymentModal({ taskType, isOpen, onClose, onConfirmed }: Payment
   const { balance } = useCUSDBalance(address)
   const { status, txHash, error, isPending, isConfirmed, startPayment, reset } = useTaskPayment()
 
-  // Bubble confirmed txHash to parent
+  // Keep a stable ref so the effect below never re-fires due to prop reference changes
+  const onConfirmedRef = useRef(onConfirmed)
+  useEffect(() => { onConfirmedRef.current = onConfirmed })
+
+  // Bubble confirmed txHash to parent — only fires when isConfirmed/txHash actually change
   useEffect(() => {
     if (isConfirmed && txHash) {
-      onConfirmed(txHash)
+      onConfirmedRef.current(txHash)
     }
-  }, [isConfirmed, txHash, onConfirmed])
+  }, [isConfirmed, txHash])
 
   // Reset state whenever modal re-opens
   useEffect(() => {

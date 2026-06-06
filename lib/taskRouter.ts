@@ -99,7 +99,7 @@ export async function runTask(taskType: number, input: TaskInput): Promise<strin
   while (attempt < 2) {
     try {
       const message = await client.messages.create({
-        model:      'claude-haiku-4-5',
+        model:      'claude-haiku-4-5-20251001',
         max_tokens: maxTokens,
         system,
         messages:   [{ role: 'user', content: user }],

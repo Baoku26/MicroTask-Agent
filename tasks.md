@@ -156,35 +156,18 @@ Mark blockers with `⚠` and notes inline.
 
 ### Day 11 — Home + task input screens
 
-- [ ] Build `app/page.tsx` — task picker grid
-  - [ ] 4 task cards with name, description, price badge
-  - [ ] Hover effects (glow border)
-  - [ ] Framer Motion entrance animation (stagger)
-  - [ ] Wallet connect state in header
-- [ ] Build `app/task/[type]/page.tsx` — input screens
-  - [ ] Caption: textarea + tone selector (professional / casual / funny / viral)
-  - [ ] Email: intent textarea + recipient selector
-  - [ ] Summary: paste area + length selector (short / medium / detailed)
-  - [ ] Explainer: topic input + audience selector (beginner / intermediate / expert)
-  - [ ] Character count indicator
-  - [ ] Sticky "Pay & Generate" CTA at bottom
-  - [ ] Disabled state when input is empty
+- [x] Home page already complete — 4 TaskCards with Framer Motion stagger, WalletConnect in header, "Coming soon" row
+- [x] `components/TaskInput.tsx` — per-task form: textarea with char count (warns at 85%, caps at 2000), chip selector for tone/recipient/length/audience, calls `onChange` on every keystroke
+- [x] `app/task/[type]/page.tsx` — full end-to-end: TaskInput form → PaymentModal → POST /api/task → loading state → ResultCard or error display; Pay button disabled when input empty or wallet disconnected
 
 ### Day 12 — Payment modal + result screen
 
-- [ ] Wire `PaymentModal` into task input screens
-- [ ] Build `components/ResultCard.tsx`
-  - [ ] Display AI result text
-  - [ ] Copy-to-clipboard button (with "Copied!" feedback)
-  - [ ] Share button (copies shareable text)
-  - [ ] "Try another" CTA
-  - [ ] Tx hash with Celoscan link
-- [ ] Build `components/TxHistory.tsx`
-  - [ ] Read from localStorage
-  - [ ] Show last 10 session transactions
-  - [ ] Each entry: task type, timestamp, tx hash link, result preview
-- [ ] Full end-to-end flow test: connect → pick task → input → pay → result
-- [ ] Commit: `feat: complete task UI with payment flow and result display`
+- [x] PaymentModal already wired from Day 8 — confirmed working
+- [x] ResultCard updated: Share button uses `navigator.share` with clipboard fallback, Copy button unchanged
+- [x] `lib/txHistory.ts` — `saveEntry` / `loadHistory` / `clearHistory` via localStorage, capped at 10 entries
+- [x] `components/TxHistory.tsx` — shows last 10 entries on home page: task label, timeAgo, Celoscan link, 80-char result preview; Clear button
+- [x] Task page wires `saveEntry` on successful AI result
+- [x] Build passes clean — full flow functional end-to-end
 
 ---
 
@@ -339,8 +322,8 @@ Keep this updated — one entry per day. Helps with the GitHub activity score.
 | 8 | Jun 8 | `feat: approve + requestTask payment flow` | [x] |
 | 9 | Jun 9 | `feat: TX verifier and API route skeleton` | [x] |
 | 10 | Jun 10 | `feat: Anthropic integration and task router` | [x] |
-| 11 | Jun 11 | `feat: home grid and task input screens` | [ ] |
-| 12 | Jun 12 | `feat: payment modal and result card` | [ ] |
+| 11 | Jun 11 | `feat: home grid and task input screens` | [x] |
+| 12 | Jun 12 | `feat: payment modal and result card` | [x] |
 | 13 | Jun 13 | `fix: MiniPay mobile polish` | [ ] |
 | 14 | Jun 14 | `feat: V2 image generation (stretch)` | [ ] |
 | 15 | Jun 15 | `test: E2E mainnet testing` | [ ] |

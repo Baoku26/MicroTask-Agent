@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, ExternalLink } from 'lucide-react'
+import { Copy, Check, ExternalLink, Share2 } from 'lucide-react'
 import { TASK_LABELS } from '@/lib/constants'
 
 interface ResultCardProps {
@@ -12,12 +12,24 @@ interface ResultCardProps {
 }
 
 export function ResultCard({ result, taskType, txHash, onReset }: ResultCardProps) {
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied]   = useState(false)
+  const [shared, setShared]   = useState(false)
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(result)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleShare = async () => {
+    const shareText = `${TASK_LABELS[taskType]} — via MicroTask Agent\n\n${result}\n\nPaid with cUSD on Celo: https://celoscan.io/tx/${txHash}`
+    if (navigator.share) {
+      await navigator.share({ text: shareText }).catch(() => {})
+    } else {
+      await navigator.clipboard.writeText(shareText)
+    }
+    setShared(true)
+    setTimeout(() => setShared(false), 2000)
   }
 
   return (
@@ -31,25 +43,36 @@ export function ResultCard({ result, taskType, txHash, onReset }: ResultCardProp
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
           {TASK_LABELS[taskType]?.toUpperCase()}
         </span>
-        <button
-          onClick={handleCopy}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            background: 'transparent',
-            border: '1px solid var(--border)',
-            borderRadius: '0.5rem',
-            padding: '0.4rem 0.75rem',
-            cursor: 'pointer',
-            color: copied ? 'var(--accent-green)' : 'var(--text-secondary)',
-            fontSize: '0.8rem',
-            transition: 'color 0.2s',
-          }}
-        >
-          {copied ? <Check size={14} /> : <Copy size={14} />}
-          {copied ? 'Copied!' : 'Copy'}
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button
+            onClick={handleShare}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '0.4rem',
+              background: 'transparent', border: '1px solid var(--border)',
+              borderRadius: '0.5rem', padding: '0.4rem 0.75rem',
+              cursor: 'pointer',
+              color: shared ? 'var(--accent-green)' : 'var(--text-secondary)',
+              fontSize: '0.8rem', transition: 'color 0.2s',
+            }}
+          >
+            {shared ? <Check size={14} /> : <Share2 size={14} />}
+            {shared ? 'Shared!' : 'Share'}
+          </button>
+          <button
+            onClick={handleCopy}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '0.4rem',
+              background: 'transparent', border: '1px solid var(--border)',
+              borderRadius: '0.5rem', padding: '0.4rem 0.75rem',
+              cursor: 'pointer',
+              color: copied ? 'var(--accent-green)' : 'var(--text-secondary)',
+              fontSize: '0.8rem', transition: 'color 0.2s',
+            }}
+          >
+            {copied ? <Check size={14} /> : <Copy size={14} />}
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
       </div>
 
       <p style={{

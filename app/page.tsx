@@ -2,6 +2,7 @@
 
 import { TaskCard } from '@/components/TaskCard'
 import { WalletConnect } from '@/components/WalletConnect'
+import { TxHistory } from '@/components/TxHistory'
 import { TASK_TYPES, TASK_LABELS } from '@/lib/constants'
 
 const V1_TASKS = [
@@ -58,6 +59,8 @@ export default function Home() {
           Image generator + Translator — coming soon
         </p>
       </div>
+
+      <TxHistory />
     </main>
   )
 }
