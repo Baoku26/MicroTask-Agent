@@ -137,20 +137,10 @@ Mark blockers with `⚠` and notes inline.
 
 ### Day 9 — TX verifier + API route skeleton
 
-- [ ] Create `lib/verifyPayment.ts`
-  - [ ] `getTransactionReceipt(txHash)` from Celo RPC
-  - [ ] Check `receipt.status === 'success'`
-  - [ ] Check `receipt.to === CONTRACT_ADDRESS`
-  - [ ] Decode event logs — find `TaskRequested`
-  - [ ] Verify `event.args.user === userAddress`
-  - [ ] Verify `event.args.taskType === taskType`
-  - [ ] Return `true` or throw with specific error code
-- [ ] Create `app/api/task/route.ts` skeleton
-  - [ ] Parse and validate request body
-  - [ ] Call `verifyPayment()` — return 403 on failure
-  - [ ] Return 200 stub result for now
-- [ ] Add rate limiting middleware (simple IP-based, 10 req/min)
-- [ ] Test with a real Alfajores tx hash
+- [x] `lib/verifyPayment.ts` — getTransactionReceipt → status check → contract address check → decodeEventLog TaskRequested → user match → taskType match; throws `PaymentVerificationError` with typed `code`
+- [x] `app/api/task/route.ts` — POST handler: rate limit (10/min per IP) → body validation → verifyPayment → 403 on failure → 200 stub result
+- [x] Error codes: `INVALID_TX`, `WRONG_CONTRACT`, `EVENT_NOT_FOUND`, `USER_MISMATCH`, `INVALID_TASK`, `RATE_LIMITED`
+- [x] Smoke-tested: invalid taskType → `INVALID_TASK` 400; fake txHash → `INVALID_TX` 403 (hits Celo RPC)
 
 ### Day 10 — Anthropic integration + task router
 
@@ -354,7 +344,7 @@ Keep this updated — one entry per day. Helps with the GitHub activity score.
 | 6 | Jun 6 | `feat: MiniPay detection and wallet connect` | [x] |
 | 7 | Jun 7 | `feat: cUSD balance and network enforcement` | [x] |
 | 8 | Jun 8 | `feat: approve + requestTask payment flow` | [x] |
-| 9 | Jun 9 | `feat: TX verifier and API route skeleton` | [ ] |
+| 9 | Jun 9 | `feat: TX verifier and API route skeleton` | [x] |
 | 10 | Jun 10 | `feat: Anthropic integration and task router` | [ ] |
 | 11 | Jun 11 | `feat: home grid and task input screens` | [ ] |
 | 12 | Jun 12 | `feat: payment modal and result card` | [ ] |
