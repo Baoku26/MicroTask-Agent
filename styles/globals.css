@@ -83,3 +83,7 @@ a {
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
 }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

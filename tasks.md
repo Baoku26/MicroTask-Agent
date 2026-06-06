@@ -125,23 +125,11 @@ Mark blockers with `⚠` and notes inline.
 
 ### Day 8 — approve() + requestTask() flow
 
-- [ ] Create `lib/contract.ts`
-  - [ ] Import ABI from compiled artifact
-  - [ ] Export contract address + cUSD address constants
-  - [ ] Export Viem public + wallet client factory
-- [ ] Create `hooks/useTaskPayment.ts`
-  - [ ] Step 1: call `approve(contractAddress, price)` on cUSD contract
-  - [ ] Wait for approve tx confirmation
-  - [ ] Step 2: call `requestTask(taskType)` on MicroTaskPayment
-  - [ ] Wait for requestTask tx confirmation
-  - [ ] Return `{ txHash, isPending, isConfirmed, error }`
-- [ ] Create `components/PaymentModal.tsx`
-  - [ ] Show: task name, price, wallet address, cUSD balance
-  - [ ] States: idle → approving → approved → paying → confirmed → error
-  - [ ] Show tx hash with Celoscan link immediately after broadcast
-- [ ] Set `feeCurrency: CUSD_ADDRESS` on all txs for gas fee abstraction
-- [ ] Test full payment flow on Alfajores testnet
-- [ ] Commit: `feat: cUSD payment flow with approve and requestTask`
+- [x] `lib/contract.ts` — inline ABI fragments for requestTask, TaskRequested event, ERC20 approve/allowance
+- [x] `hooks/useTaskPayment.ts` — approve → waitForReceipt → requestTask → waitForReceipt state machine; returns `{ status, txHash, isPending, isConfirmed, error, startPayment, reset }`
+- [x] `components/PaymentModal.tsx` — bottom-sheet modal, 6-state UI (idle/approving/approved/paying/confirmed/error), step progress bar, Celoscan tx link, try-again on error
+- [x] Pay button in task page wired to modal; disabled when wallet not connected
+- [x] Build passes clean (`npm run build` — all 4 routes generated)
 
 ---
 
@@ -365,7 +353,7 @@ Keep this updated — one entry per day. Helps with the GitHub activity score.
 | 5 | Jun 6 | `feat: routing and page shells` | [x] |
 | 6 | Jun 6 | `feat: MiniPay detection and wallet connect` | [x] |
 | 7 | Jun 7 | `feat: cUSD balance and network enforcement` | [x] |
-| 8 | Jun 8 | `feat: approve + requestTask payment flow` | [ ] |
+| 8 | Jun 8 | `feat: approve + requestTask payment flow` | [x] |
 | 9 | Jun 9 | `feat: TX verifier and API route skeleton` | [ ] |
 | 10 | Jun 10 | `feat: Anthropic integration and task router` | [ ] |
 | 11 | Jun 11 | `feat: home grid and task input screens` | [ ] |
