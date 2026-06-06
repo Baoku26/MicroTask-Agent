@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyPayment, PaymentVerificationError } from '@/lib/verifyPayment'
+import { runTask } from '@/lib/taskRouter'
 import { TASK_TYPES } from '@/lib/constants'
 
 // ── Simple in-memory rate limiter (10 req/min per IP) ──────────────────────
@@ -82,13 +83,19 @@ export async function POST(req: NextRequest) {
     return err('INVALID_TX', 'Payment verification failed', 403)
   }
 
-  // ── AI call goes here (Day 10) ──────────────────────────────────────────
-  // For now return a stub so the payment flow can be tested end-to-end
+  // Call AI — payment is already verified onchain
+  let result: string
+  try {
+    result = await runTask(taskType, input)
+  } catch (e: any) {
+    return err('AI_ERROR', e?.message ?? 'AI generation failed', 502)
+  }
+
   return NextResponse.json({
     success:  true,
-    result:   `[Day 10 stub] Task type ${taskType} received. AI integration coming next.`,
+    result,
     taskType,
-    chars:    0,
+    chars:    result.length,
     txHash,
   })
 }

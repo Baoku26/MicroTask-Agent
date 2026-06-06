@@ -144,18 +144,11 @@ Mark blockers with `⚠` and notes inline.
 
 ### Day 10 — Anthropic integration + task router
 
-- [ ] Install `@anthropic-ai/sdk`
-- [ ] Create `lib/taskRouter.ts`
-  - [ ] System prompts for all 4 task types
-  - [ ] `buildPrompt(taskType, input)` function
-  - [ ] `callAnthropic(prompt)` wrapper
-  - [ ] Token limits per task type
-  - [ ] Retry logic (1 retry on 5xx)
-- [ ] Wire task router into `/api/task` route
-- [ ] Test all 4 task types end-to-end (mocked tx verification for now)
-- [ ] Add input sanitization — strip HTML, cap at 2000 chars
-- [ ] Add output truncation — `MAX_CHARS` per task type
-- [ ] Commit: `feat: POST /api/task with onchain verification and Anthropic integration`
+- [x] Installed `@anthropic-ai/sdk`
+- [x] `lib/taskRouter.ts` — `buildPrompt()` for all 4 task types (CAPTION, EMAIL, SUMMARY, EXPLAIN) with tailored system prompts; `runTask()` calls `claude-haiku-4-5`, per-task token limits, 1 retry on 5xx, output char truncation
+- [x] Input sanitized: strip HTML, cap at 2000 chars
+- [x] Output truncated to per-task MAX_CHARS with `…` suffix
+- [x] `/api/task` wired: verify → runTask → return `{ success, result, taskType, chars, txHash }`
 
 ---
 
@@ -345,7 +338,7 @@ Keep this updated — one entry per day. Helps with the GitHub activity score.
 | 7 | Jun 7 | `feat: cUSD balance and network enforcement` | [x] |
 | 8 | Jun 8 | `feat: approve + requestTask payment flow` | [x] |
 | 9 | Jun 9 | `feat: TX verifier and API route skeleton` | [x] |
-| 10 | Jun 10 | `feat: Anthropic integration and task router` | [ ] |
+| 10 | Jun 10 | `feat: Anthropic integration and task router` | [x] |
 | 11 | Jun 11 | `feat: home grid and task input screens` | [ ] |
 | 12 | Jun 12 | `feat: payment modal and result card` | [ ] |
 | 13 | Jun 13 | `fix: MiniPay mobile polish` | [ ] |
