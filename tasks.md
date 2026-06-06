@@ -38,31 +38,35 @@ Mark blockers with `⚠` and notes inline.
 - [x] Configure `hardhat.config.js` for Alfajores + Celo Mainnet
 - [x] Run `npx hardhat compile` — zero errors
 
-### Day 2 — Testnet deploy & verify
+### Day 2 — Contract testing (local) + prep for mainnet
 
-- [ ] Get Alfajores testnet CELO from faucet: https://faucet.celo.org
-- [ ] Get testnet cUSD from faucet
-- [ ] Deploy to Alfajores: `npx hardhat run scripts/deploy.ts --network alfajores`
-- [ ] Record deployed contract address in `planning.md`
-- [ ] Manually test `requestTask()` on Alfajores via Hardhat console
-  - [ ] Confirm cUSD `approve()` works before `requestTask()`
-  - [ ] Confirm `TaskRequested` event is emitted
-  - [ ] Confirm cUSD balance of contract increases
-  - [ ] Confirm `withdraw()` works for owner
-  - [ ] Confirm non-owner `withdraw()` reverts
-- [ ] Verify contract on Alfajores explorer
+> NOTE: Alfajores forno RPC (alfajores-forno.celo-testnet.org) is NXDOMAIN — decommissioned by Celo.
+> No public Alfajores RPC found. Replaced testnet deploy with thorough local Hardhat tests.
+
+- [x] Write `test/MicroTaskPayment.test.js` — 16 tests covering all contract functions
+- [x] All 16 tests passing locally (npm test)
+  - [x] cUSD `approve()` + `requestTask()` flow verified
+  - [x] `TaskRequested` event fields verified (user, taskType, amount, requestId, timestamp)
+  - [x] cUSD balance transfer verified
+  - [x] `withdraw()` owner flow verified
+  - [x] `withdraw()` non-owner revert verified
+  - [x] `updatePrice()` owner + non-owner verified
+  - [x] Unique requestId per call verified
+- [x] `tsconfig.json` added (module: commonjs, ignoreDeprecations: 6.0)
+- [x] `contracts/test/MockERC20.sol` added for local test fixture
+- [ ] Add `PRIVATE_KEY` and `CELOSCAN_API_KEY` to `.env.local` before mainnet deploy
 
 ### Day 3 — Mainnet deploy & verify
 
-- [ ] Review contract one final time before mainnet
-- [ ] Deploy to Celo Mainnet: `npx hardhat run scripts/deploy.ts --network celo`
-- [ ] Record mainnet contract address in:
-  - [ ] `planning.md`
-  - [ ] `CLAUDE.md`
-  - [ ] `.env.local` as `NEXT_PUBLIC_CONTRACT_ADDRESS`
-- [ ] Verify on Celoscan: `npx hardhat verify --network celo <ADDRESS> <CUSD_ADDRESS>`
-- [ ] Confirm contract is publicly visible on https://celoscan.io
-- [ ] Commit: `feat: deploy MicroTaskPayment to Celo Mainnet`
+- [x] Review contract one final time before mainnet
+- [x] Deploy to Celo Mainnet: `npm run deploy:mainnet`
+- [x] Contract deployed: `0x986C4960276545B9672a0621511FC9D4b7e88912`
+- [x] Record mainnet contract address in:
+  - [x] `planning.md`
+  - [x] `CLAUDE.md`
+  - [x] `.env.local` as `NEXT_PUBLIC_CONTRACT_ADDRESS`
+- [x] Verify on Celoscan — source verified ✓
+- [x] Confirm contract publicly visible: https://celoscan.io/address/0x986C4960276545B9672a0621511FC9D4b7e88912#code
 
 ---
 
@@ -70,38 +74,28 @@ Mark blockers with `⚠` and notes inline.
 
 ### Day 4 — Project setup
 
-- [ ] Initialize Next.js 14 project with App Router: `npx create-next-app@latest`
-- [ ] Install core dependencies:
-  - [ ] `tailwindcss`, `postcss`, `autoprefixer`
-  - [ ] `framer-motion`
-  - [ ] `lucide-react`
-  - [ ] `wagmi`, `viem`, `@rainbow-me/rainbowkit`
-  - [ ] `@tanstack/react-query`
-- [ ] Configure Tailwind with custom design tokens
-- [ ] Add CSS variables to `styles/globals.css`:
-  - [ ] `--bg-primary: #0A0A0F`
-  - [ ] `--bg-secondary: #111118`
-  - [ ] `--bg-card: #16161E`
-  - [ ] `--border: #2A2A38`
-  - [ ] `--accent: #7B61FF`
-  - [ ] `--accent-green: #00D395`
-  - [ ] `--accent-amber: #F5A623`
-  - [ ] `--text-primary: #F0F0FF`
-  - [ ] `--text-secondary: #8888AA`
-  - [ ] `--text-muted: #4A4A66`
-- [ ] Add Google Fonts: Space Mono + DM Sans
-- [ ] Create `lib/constants.ts` with all task types, prices, chain config
-- [ ] Create `.env.example` and `.env.local`
-- [ ] Set up `app/layout.tsx` with providers (Wagmi, RainbowKit, QueryClient)
+- [x] Install Next.js 14 + all frontend deps (next, react, wagmi v2, viem, rainbowkit, react-query, framer-motion, lucide-react)
+- [x] Install Tailwind CSS v4 + postcss + autoprefixer + @tailwindcss/postcss
+- [x] `styles/globals.css` — all 10 CSS variables + Tailwind v4 @theme tokens + skeleton shimmer
+- [x] `lib/constants.ts` — task types, prices, labels, descriptions, chain config
+- [x] `lib/wagmi.ts` — wagmiConfig with Celo chain + forno RPC
+- [x] `app/providers.tsx` — WagmiProvider + RainbowKitProvider + QueryClientProvider
+- [x] `app/layout.tsx` — Space Mono + DM Sans fonts, metadata, providers wired
+- [x] `app/page.tsx` — scaffold shell (full UI Day 11)
+- [x] `next.config.js` + `postcss.config.js` created
+- [x] `tsconfig.json` updated for Next.js; `tsconfig.hardhat.json` split out for Hardhat
+- [x] `package.json` — dev/build/start/type-check scripts added
+- [x] Dev server boots clean on localhost:3000 ✓
 
 ### Day 5 — Routing & page shells
 
-- [ ] Create `app/page.tsx` — home (task picker grid) shell
-- [ ] Create `app/task/[type]/page.tsx` — per-task input shell
-- [ ] Create basic `components/TaskCard.tsx` with price badge
-- [ ] Create `components/ResultCard.tsx` shell
-- [ ] Confirm routing works: home → task → result
-- [ ] Commit: `feat: scaffold Next.js project with routing and design tokens`
+- [x] `app/page.tsx` — home with staggered TaskCard grid (4 V1 tasks + coming-soon strip)
+- [x] `app/task/[type]/page.tsx` — dynamic route, validates task ID, shows skeleton input + disabled pay button
+- [x] `app/not-found.tsx` — 404 page for invalid routes
+- [x] `components/TaskCard.tsx` — price badge, hover glow, Framer Motion stagger entrance
+- [x] `components/ResultCard.tsx` — result display, copy button, Celoscan tx link, reset CTA
+- [x] All routes verified: / → 200, /task/1 → 200, /task/99 → 404 ✓
+- [x] Fixed: WalletConnect projectId fallback, viewport metadata, webpack missing-module warnings
 
 ---
 
@@ -109,29 +103,21 @@ Mark blockers with `⚠` and notes inline.
 
 ### Day 6 — MiniPay detection + connect
 
-- [ ] Create `hooks/useMiniPay.ts`
-  - [ ] Detect `window.ethereum?.isMiniPay`
-  - [ ] Auto-connect if MiniPay detected
-  - [ ] Expose `{ isMiniPay, address, isConnected }`
-- [ ] Configure Wagmi with Celo Mainnet chain
-- [ ] Set up Viem public client pointing to `https://forno.celo.org`
-- [ ] Create `components/WalletConnect.tsx`
-  - [ ] MiniPay: show connected address, no modal
-  - [ ] Browser: RainbowKit connect button
-  - [ ] Wrong network: "Switch to Celo" button
-  - [ ] No wallet: install prompt
-- [ ] Test MiniPay detection in Chrome DevTools (mock `window.ethereum.isMiniPay = true`)
+- [x] `hooks/useMiniPay.ts` — detects `window.ethereum.isMiniPay`, auto-connects with `injected()`, exposes `{ isMiniPay, address, isConnected }`
+- [x] `hooks/useCUSDBalance.ts` — reads cUSD balance via wagmi `useReadContract`, returns formatted string
+- [x] `lib/viemClient.ts` — Viem public client on forno.celo.org
+- [x] `components/WalletConnect.tsx` — 4 states: MiniPay pill, browser connected pill, wrong network amber button, RainbowKit connect button
+- [x] `WalletConnect` wired into home page header and task page header
+- [x] WalletConnect project ID set in `.env.local`
+- [x] Both routes compile 200 with wallet component ✓
 
 ### Day 7 — cUSD balance + network enforcement
 
-- [ ] Create `hooks/useCUSDBalance.ts`
-  - [ ] Read cUSD balance of connected address
-  - [ ] Return formatted balance (e.g. "1.25 cUSD")
-  - [ ] Refresh on block
-- [ ] Display cUSD balance in header
-- [ ] Implement network enforcement — redirect to wrong network screen if not on Celo Mainnet
-- [ ] Add Celo Mainnet to RainbowKit chain list
-- [ ] Commit: `feat: wallet connection with MiniPay detection and cUSD balance`
+- [x] `hooks/useCUSDBalance.ts` — `refetchInterval: 5000` keeps balance live (≈ 1 Celo block)
+- [x] cUSD balance shown in WalletConnect pill on all pages
+- [x] `components/NetworkGuard.tsx` — full-screen wrong-network blocker with Switch to Celo button
+- [x] `NetworkGuard` wired into `providers.tsx` — covers every route automatically
+- [x] Celo Mainnet in wagmi config; RainbowKit inherits it
 
 ---
 
@@ -373,12 +359,12 @@ Keep this updated — one entry per day. Helps with the GitHub activity score.
 | Day | Date | Commit message | Status |
 |-----|------|---------------|--------|
 | 1 | Jun 1 | `feat: write MicroTaskPayment.sol and Hardhat setup` | [x] |
-| 2 | Jun 2 | `feat: deploy and test on Alfajores testnet` | [ ] |
-| 3 | Jun 3 | `feat: deploy and verify on Celo Mainnet` | [ ] |
-| 4 | Jun 4 | `feat: scaffold Next.js with design tokens` | [ ] |
-| 5 | Jun 5 | `feat: routing and page shells` | [ ] |
-| 6 | Jun 6 | `feat: MiniPay detection and wallet connect` | [ ] |
-| 7 | Jun 7 | `feat: cUSD balance and network enforcement` | [ ] |
+| 2 | Jun 5 | `feat: 16-test local suite covering all contract functions` | [x] |
+| 3 | Jun 6 | `feat: deploy and verify MicroTaskPayment on Celo Mainnet` | [x] |
+| 4 | Jun 6 | `feat: scaffold Next.js with design tokens` | [x] |
+| 5 | Jun 6 | `feat: routing and page shells` | [x] |
+| 6 | Jun 6 | `feat: MiniPay detection and wallet connect` | [x] |
+| 7 | Jun 7 | `feat: cUSD balance and network enforcement` | [x] |
 | 8 | Jun 8 | `feat: approve + requestTask payment flow` | [ ] |
 | 9 | Jun 9 | `feat: TX verifier and API route skeleton` | [ ] |
 | 10 | Jun 10 | `feat: Anthropic integration and task router` | [ ] |

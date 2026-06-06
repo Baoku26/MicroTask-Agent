@@ -237,8 +237,8 @@ Rewards are calculated from:
 | Explorer | https://celoscan.io |
 | cUSD (mainnet) | `0x765DE816845861e75A25fCA122bb6898B8B1282a` |
 | cUSD (testnet) | `0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1` |
-| MicroTaskPayment (mainnet) | TBD after deploy |
-| MicroTaskPayment (testnet) | TBD after deploy |
+| MicroTaskPayment (mainnet) | `0x986C4960276545B9672a0621511FC9D4b7e88912` |
+| MicroTaskPayment (testnet) | N/A — Alfajores forno decommissioned; skipped |
 | Vercel project URL | TBD after deploy |
 
 ---

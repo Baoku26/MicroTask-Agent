@@ -355,20 +355,26 @@ npm run type-check
 
 ## Build Status
 
+### Deployed Contract
+
+| Network | Address | Explorer |
+|--------|---------|---------|
+| Celo Mainnet | `0x986C4960276545B9672a0621511FC9D4b7e88912` | [celoscan.io](https://celoscan.io/address/0x986C4960276545B9672a0621511FC9D4b7e88912#code) |
+
 ### Completed
 
-**Phase 1 — Day 1 (Jun 4–5, 2026)**
+**Phase 1 — Days 1–3 (Jun 4–6, 2026)**
 - `contracts/MicroTaskPayment.sol` written and compiles clean (`solc 0.8.19`, EVM target: paris)
 - `contracts/scripts/deploy.ts` written — auto-selects cUSD address by network
-- `hardhat.config.js` at project root — Alfajores + Celo Mainnet networks, Celoscan `customChains`
-- `package.json` at root with `compile`, `deploy:testnet`, `deploy:mainnet` npm scripts
-- `.env.example` created with all required vars
-- `.gitignore` created
+- `hardhat.config.js` at project root — Celo Mainnet config, Celoscan `customChains`, dotenv loading
+- `tsconfig.json` added — `module: commonjs`, `ignoreDeprecations: "6.0"` for TypeScript 6 compat
+- `test/MicroTaskPayment.test.js` — 16 tests, all passing (local Hardhat network)
+- `contracts/test/MockERC20.sol` — test fixture
+- **MicroTaskPayment deployed to Celo Mainnet:** `0x986C4960276545B9672a0621511FC9D4b7e88912`
+- **Verified on Celoscan:** https://celoscan.io/address/0x986C4960276545B9672a0621511FC9D4b7e88912#code
 
 ### Pending
 
-- **Day 2:** Alfajores testnet deploy + manual testing (`requestTask`, `withdraw`, events)
-- **Day 3:** Celo Mainnet deploy + Celoscan verification
 - **Day 4:** Next.js 14 scaffold + design tokens (adds `app/`, `styles/`, updates `package.json`)
 - Days 5–20: see `tasks.md`
 

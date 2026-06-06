@@ -1,4 +1,14 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config({ path: ".env.local" });
+
+// Pad key to 64 hex chars if wallet stripped leading zeros
+function normalizeKey(raw) {
+  if (!raw) return undefined;
+  const hex = raw.startsWith("0x") ? raw.slice(2) : raw;
+  return "0x" + hex.padStart(64, "0");
+}
+
+const DEPLOYER_KEY = normalizeKey(process.env.PRIVATE_KEY);
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -17,20 +27,17 @@ module.exports = {
   networks: {
     alfajores: {
       url: "https://alfajores-forno.celo-testnet.org",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: DEPLOYER_KEY ? [DEPLOYER_KEY] : [],
       chainId: 44787,
     },
     celo: {
       url: "https://forno.celo.org",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: DEPLOYER_KEY ? [DEPLOYER_KEY] : [],
       chainId: 42220,
     },
   },
   etherscan: {
-    apiKey: {
-      alfajores: process.env.CELOSCAN_API_KEY ?? "",
-      celo: process.env.CELOSCAN_API_KEY ?? "",
-    },
+    apiKey: process.env.CELOSCAN_API_KEY ?? "",
     customChains: [
       {
         network: "alfajores",
